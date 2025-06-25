@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>بررسی موجودی ETH شما در شبکه Base</title>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+</head>
+<body>
+  <h2>بررسی موجودی ETH شما در شبکه Base</h2>
+  <button onclick="checkBalance()">بررسی موجودی</button>
+  <p id="output">در حال انتظار...</p>
+
+  <script>
+    async function checkBalance() {
+      if (!window.ethereum) {
+        document.getElementById("output").innerText = "کیف پول اتریوم پیدا نشد! لطفا متامسک را نصب کنید.";
+        return;
+      }
+
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+
+        // دریافت موجودی ETH (native coin) در شبکه Base
+        const balance = await provider.getBalance(userAddress);
+
+        // تبدیل از wei به ETH
+        const formattedBalance = ethers.utils.formatEther(balance);
+
+        document.getElementById("output").innerText = `موجودی ETH شما: ${formattedBalance} ETH`;
+      } catch (error) {
+        console.error("خطا:", error);
+        document.getElementById("output").innerText = "خطا در دریافت اطلاعات، لطفاً کنسول را بررسی کنید.";
+      }
+    }
+  </script>
+</body>
+</html>
